@@ -6,6 +6,11 @@
       <list>
         <option value="$PROJECT_DIR$/backend/risk-score-service/pom.xml" />
         <option value="$PROJECT_DIR$/backend/transaction-service/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/api-gateway/api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/ml-service/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/alert-service/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/report-service/pom.xml" />
       </list>
     </option>
   </component>
