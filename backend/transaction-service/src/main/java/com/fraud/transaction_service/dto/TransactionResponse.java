@@ -1,5 +1,6 @@
 package com.fraud.transaction_service.dto;
 
+<<<<<<< HEAD
 import com.fraud.transaction_service.entity.Channel;
 import com.fraud.transaction_service.entity.TransactionStatus;
 import lombok.*;
@@ -27,4 +28,7 @@ public class TransactionResponse {
     private LocalDateTime transactionDatetime;
     private LocalDateTime createdAt;
 
+=======
+public class TransactionResponse {
+>>>>>>> upstream/backend-dev
 }

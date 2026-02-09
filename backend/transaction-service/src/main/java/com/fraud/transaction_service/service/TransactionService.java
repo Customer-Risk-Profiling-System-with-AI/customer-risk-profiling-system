@@ -1,5 +1,6 @@
 package com.fraud.transaction_service.service;
 
+<<<<<<< HEAD
 import com.fraud.transaction_service.entity.Transaction;
 import org.springframework.stereotype.Service;
 import com.fraud.transaction_service.repository.TransactionRepository;
@@ -28,4 +29,7 @@ public class TransactionService {
 
     }
 
+=======
+public class TransactionService {
+>>>>>>> upstream/backend-dev
 }

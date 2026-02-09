@@ -1,5 +1,6 @@
 package com.fraud.transaction_service.dto;
 
+<<<<<<< HEAD
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -28,4 +29,7 @@ public class TransactionRequest {
     private String deviceCode;
     private String location;
 
+=======
+public class TransactionRequest {
+>>>>>>> upstream/backend-dev
 }

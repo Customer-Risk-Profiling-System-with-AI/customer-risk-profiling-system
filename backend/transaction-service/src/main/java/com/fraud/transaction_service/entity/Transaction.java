@@ -1,5 +1,6 @@
 package com.fraud.transaction_service.entity;
 
+<<<<<<< HEAD
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -63,4 +64,7 @@ public class Transaction {
 
 
 
+=======
+public class Transaction {
+>>>>>>> upstream/backend-dev
 }
