@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "transaction")
+@Table(name = "transactions")
 @Data //Automatically generates: ✔ Getters ✔ Setters ✔ toString() ✔ equals() / hashCode() ✔ Required constructor
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,10 +27,11 @@ public class Transaction {
     @Column(name = "amount", nullable = false)
     private Double amount;     // you can change to BigDecimal later if you want
 
-    @Column(name = "currency", length = 10)
+    @Column(name = "currency", length = 10, nullable = false)
     private String currency;
 
-    @Column(name = "channel", length = 20)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "channel", length = 20,nullable = false)
     private String channel;    // POS / ATM / ECOM
 
     @Column(name = "merchant_code")
@@ -42,7 +43,8 @@ public class Transaction {
     @Column(name = "location")
     private String location;   // FK
 
-    @Column(name = "transaction_status", length = 30)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_status",nullable = false, length = 30)
     private String transactionStatus;
 
     @Column(name = "decline_reason", length = 255)
@@ -50,6 +52,13 @@ public class Transaction {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @PrePersist  //JPA lifecycle callback.
+    public void prePersist(){
+        if(createdAt == null) createdAt = LocalDateTime.now();
+        if(transactionDatetime == null) transactionDatetime = LocalDateTime.now();
+        if(transactionStatus == null) transactionStatus = String.valueOf(TransactionStatus.PENDING);
+    }
 
 
 

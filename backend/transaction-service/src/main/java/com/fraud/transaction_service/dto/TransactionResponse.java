@@ -1,5 +1,7 @@
 package com.fraud.transaction_service.dto;
 
+import com.fraud.transaction_service.entity.Channel;
+import com.fraud.transaction_service.entity.TransactionStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,14 +17,13 @@ public class TransactionResponse {
     private Long customerId;
     private Double amount;
     private String currency;
-    private String channel;
+    private Channel channel;
 
     private String merchantCode;
     private String deviceCode;
     private String location;
 
-    private String transactionStatus;
-    private String declineReason;
+    private TransactionStatus transactionStatus;
     private LocalDateTime transactionDatetime;
     private LocalDateTime createdAt;
 
