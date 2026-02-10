@@ -1,0 +1,70 @@
+package com.fraud.transaction_service.entity;
+
+<<<<<<< HEAD
+import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "transactions")
+@Data //Automatically generates: ✔ Getters ✔ Setters ✔ toString() ✔ equals() / hashCode() ✔ Required constructor
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Transaction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "transaction_id")
+    private Long transactionId;
+
+    @Column(name = "customer_id", nullable = false)
+    private Long customerId;   // FK
+
+    @Column(name = "transaction_datetime", nullable = false)
+    private LocalDateTime transactionDatetime;
+
+    @Column(name = "amount", nullable = false)
+    private Double amount;     // you can change to BigDecimal later if you want
+
+    @Column(name = "currency", length = 10, nullable = false)
+    private String currency;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "channel", length = 20,nullable = false)
+    private String channel;    // POS / ATM / ECOM
+
+    @Column(name = "merchant_code")
+    private String merchantCode;   // FK
+
+    @Column(name = "device_code")
+    private String deviceCode;     // FK
+
+    @Column(name = "location")
+    private String location;   // FK
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_status",nullable = false, length = 30)
+    private String transactionStatus;
+
+    @Column(name = "decline_reason", length = 255)
+    private String declineReason;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist  //JPA lifecycle callback.
+    public void prePersist(){
+        if(createdAt == null) createdAt = LocalDateTime.now();
+        if(transactionDatetime == null) transactionDatetime = LocalDateTime.now();
+        if(transactionStatus == null) transactionStatus = String.valueOf(TransactionStatus.PENDING);
+    }
+
+
+
+
+=======
+public class Transaction {
+>>>>>>> upstream/backend-dev
+}
