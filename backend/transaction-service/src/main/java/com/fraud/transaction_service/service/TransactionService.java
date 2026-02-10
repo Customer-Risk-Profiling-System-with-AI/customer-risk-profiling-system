@@ -3,18 +3,21 @@ package com.fraud.transaction_service.service;
 
 import com.fraud.transaction_service.entity.Transaction;
 import com.fraud.transaction_service.entity.TransactionStatus;
-import org.apache.catalina.filters.ExpiresFilter;
+import com.fraud.transaction_service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import com.fraud.transaction_service.repository.TransactionRepository;
 import com.fraud.transaction_service.dto.*;
+import com.fraud.transaction_service.exception.*;
+
+import java.util.List;
 
 @Service
 public class TransactionService {
 
-    private TransactionRepository transactionrepository;
+    private final TransactionRepository transactionRepository;
 
-    public TransactionService(TransactionRepository transactionrepository) {
-        this.transactionrepository = transactionrepository;
+    public TransactionService(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
     }
 
     public TransactionResponse create(TransactionRequest request) {
@@ -40,7 +43,7 @@ public class TransactionService {
                 .transactionStatus(TransactionStatus.PENDING)
                 .build();
 
-        Transaction saved = transactionrepository.save(ts);
+        Transaction saved = transactionRepository.save(ts);
 
         return map(saved); //Convert a Transaction entity into a TransactionResponse DTO.
     }
@@ -61,6 +64,35 @@ public class TransactionService {
                 .createdAt(ts.getCreatedAt())
                 .build();
 
+    }
+
+    public List<Transaction> getByCustomerId(Long customerId){
+        return transactionRepository.findByCustomerId(customerId);
+    }
+
+    public List<TransactionResponse> getApproved(Long customerId){
+        return transactionRepository.findByCustomerId(customerId)
+                .stream() //Start Reading the List One by One
+                .filter(tx -> tx.getTransactionStatus() == TransactionStatus.APPROVED)
+                .map(this::map)
+                .toList();
+    }
+
+    public TransactionResponse getByTransactionId(Long transactionId){
+        Transaction ts = transactionRepository.findByTransactionId(transactionId)
+                .orElseThrow(()-> new ResourceNotFoundException("Transaction not found:" + transactionId));
+        return map(ts);
+    }
+
+    public TransactionResponse updateStatus(Long transactionId, TransactionStatus status, String declineReason) {
+        Transaction tx = transactionRepository.findByTransactionId(transactionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found: " + transactionId));
+
+        tx.setTransactionStatus(status);
+        tx.setDeclineReason(declineReason);
+
+        Transaction saved = transactionRepository.save(tx);
+        return map(saved);
     }
 
 }
