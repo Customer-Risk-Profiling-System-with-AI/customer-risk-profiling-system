@@ -1,10 +1,11 @@
 package com.fraud.transaction_service.dto;
 
-<<<<<<< HEAD
+
 import com.fraud.transaction_service.entity.Channel;
 import com.fraud.transaction_service.entity.TransactionStatus;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,7 +17,8 @@ public class TransactionResponse {
 
     private Long transactionId;
     private Long customerId;
-    private Double amount;
+
+    private BigDecimal amount;
     private String currency;
     private Channel channel;
 
@@ -25,10 +27,9 @@ public class TransactionResponse {
     private String location;
 
     private TransactionStatus transactionStatus;
+    private String declineReason;
+
     private LocalDateTime transactionDatetime;
     private LocalDateTime createdAt;
 
-=======
-public class TransactionResponse {
->>>>>>> upstream/backend-dev
 }
