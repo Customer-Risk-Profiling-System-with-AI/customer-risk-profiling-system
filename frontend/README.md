@@ -6,6 +6,6 @@ Frontend application for the Customer Risk Profiling System.
 
 This folder contains all frontend code, components, and UI assets.
 
-## Getting Started  uyuhhhjihijjjkjijoiuj
+## Getting Started 
 
 [Add frontend setup instructions here]
