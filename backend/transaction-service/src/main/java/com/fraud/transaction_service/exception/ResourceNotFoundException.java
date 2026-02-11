@@ -1,4 +1,8 @@
 package com.fraud.transaction_service.exception;
 
-public class ResourceNotFoundException {
+public class ResourceNotFoundException extends RuntimeException {
+
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
 }
