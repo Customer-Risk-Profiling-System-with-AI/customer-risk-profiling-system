@@ -1,6 +1,6 @@
 package com.fraud.transaction_service.dto;
 
-import com.fraud.transaction_service.entity.Channel;
+import com.fraud.transaction_service.Channel.Channel;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

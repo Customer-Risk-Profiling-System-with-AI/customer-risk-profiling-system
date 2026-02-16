@@ -2,12 +2,11 @@ package com.fraud.transaction_service.service;
 
 
 import com.fraud.transaction_service.entity.Transaction;
-import com.fraud.transaction_service.entity.TransactionStatus;
+import com.fraud.transaction_service.Channel.TransactionStatus;
 import com.fraud.transaction_service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import com.fraud.transaction_service.repository.TransactionRepository;
 import com.fraud.transaction_service.dto.*;
-import com.fraud.transaction_service.exception.*;
 
 import java.util.List;
 
