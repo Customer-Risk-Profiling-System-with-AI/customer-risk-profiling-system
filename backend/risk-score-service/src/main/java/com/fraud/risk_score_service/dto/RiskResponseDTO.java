@@ -17,7 +17,7 @@ public class RiskResponseDTO {
     private Long customerId;
     private Integer score;             // 0-100
     private String category;           // LOW/MEDIUM/HIGH
-    //private String modelVersion;
+    private String modelVersion;
     private LocalDateTime calculatedAt;
 
     private List<String> reasons;
