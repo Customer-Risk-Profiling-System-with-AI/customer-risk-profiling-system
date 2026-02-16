@@ -8,6 +8,7 @@ public class RiskScoreServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RiskScoreServiceApplication.class, args);
+		System.out.print("Risk_score is running");
 	}
 
 }
