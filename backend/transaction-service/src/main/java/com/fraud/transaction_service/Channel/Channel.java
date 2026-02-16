@@ -1,4 +1,4 @@
-package com.fraud.transaction_service.entity;
+package com.fraud.transaction_service.Channel;
 
 public enum Channel {
 

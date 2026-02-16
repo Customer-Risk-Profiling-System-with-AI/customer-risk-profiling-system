@@ -3,7 +3,7 @@ package com.fraud.transaction_service.controller;
 import com.fraud.transaction_service.dto.TransactionRequest;
 import com.fraud.transaction_service.dto.TransactionResponse;
 import com.fraud.transaction_service.entity.Transaction;
-import com.fraud.transaction_service.entity.TransactionStatus;
+import com.fraud.transaction_service.Channel.TransactionStatus;
 import com.fraud.transaction_service.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
