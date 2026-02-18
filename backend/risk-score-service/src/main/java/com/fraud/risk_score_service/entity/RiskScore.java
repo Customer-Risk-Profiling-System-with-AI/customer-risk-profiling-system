@@ -27,8 +27,6 @@ public class RiskScore {
     @Column(nullable = false,length = 20)
     private String category;
 
-    private String modelVersion;
-
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 

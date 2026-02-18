@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface RiskScoreService {
 
-    RiskRequestDTO calculateNow(Long customerId, String trigger);
+    RiskResponseDTO calculateNow(Long customerId, String trigger);
     RiskResponseDTO getCurrent(Long customerId);
     List<RiskResponseDTO> getHistory(Long customerId);
 

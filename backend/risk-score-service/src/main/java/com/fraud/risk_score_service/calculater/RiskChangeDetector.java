@@ -1,6 +1,5 @@
 package com.fraud.risk_score_service.calculater;
 
-
 import org.springframework.stereotype.Component;
 
 @Component
