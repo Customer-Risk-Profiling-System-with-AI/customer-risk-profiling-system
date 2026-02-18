@@ -37,7 +37,7 @@ public abstract class RiskScoreServiceImpl implements RiskScoreService {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
-            return "{}";
+            return null;
         }
     }
 
@@ -132,6 +132,42 @@ public abstract class RiskScoreServiceImpl implements RiskScoreService {
         return response;
 
     }
+
+
+    @Override
+    public RiskResponseDTO getCurrent(Long customerId) {
+
+        RiskScore rs = riskScoreRepository.findByCustomerId(customerId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("No current risk score for customer " + customerId));
+
+        return RiskResponseDTO.builder()
+                .customerId(rs.getCustomerId())
+                .score(rs.getScore())
+                .category(rs.getCategory())
+                .calculatedAt(rs.getUpdatedAt())
+                .reasons(null)
+                .build();
+    }
+
+    @Override
+    public List<RiskResponseDTO> getHistory(Long customerId) {
+        List<RiskHistory> list = riskHistoryRepository.findTop30ByCustomerIdOrderByCalculatedAtDesc(customerId);
+
+        List<RiskResponseDTO> out = new ArrayList<>();
+        for (RiskHistory h : list) {
+            out.add(RiskResponseDTO.builder()
+                    .customerId(h.getCustomerId())
+                    .score(h.getScore())
+                    .category(h.getCategory())
+                    .calculatedAt(h.getCalculatedAt())
+                    .reasons(null)
+                    .build());
+        }
+        return out;
+    }
+
+
 
 
 
