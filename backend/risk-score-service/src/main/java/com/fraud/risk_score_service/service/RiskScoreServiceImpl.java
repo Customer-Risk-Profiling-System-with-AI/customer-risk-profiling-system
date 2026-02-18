@@ -9,10 +9,9 @@ import com.fraud.risk_score_service.entity.RiskScore;
 import com.fraud.risk_score_service.exception.ResourceNotFoundException;
 import com.fraud.risk_score_service.repository.*;
 import com.fraud.risk_score_service.dto.*;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public abstract class RiskScoreServiceImpl implements RiskScoreService {
+public class RiskScoreServiceImpl implements RiskScoreService {
 
     private final TransactionServiceClient transactionServiceClient;
     private final MlServiceClient mlServiceClient;
@@ -37,7 +36,7 @@ public abstract class RiskScoreServiceImpl implements RiskScoreService {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
-            return "{}";
+            return null;
         }
     }
 
@@ -45,12 +44,10 @@ public abstract class RiskScoreServiceImpl implements RiskScoreService {
         //TODO: replace with real rules
         List<String> reasons = new ArrayList<>();
 
-        if (score >= 70) reasons.add("High predicted fraud score");
-
-        if (features.getDeclineRatio() > 0.4)
+        if (features.getDeclineRatio() != null && features.getDeclineRatio() > 0.4)
             reasons.add("Too many declined transactions");
 
-        if (features.getSpendVelocity() > 3.0)
+        if (features.getSpendVelocity() != null && features.getSpendVelocity() > 3.0)
             reasons.add("Unusually fast spending");
 
         return reasons;
@@ -109,6 +106,7 @@ public abstract class RiskScoreServiceImpl implements RiskScoreService {
 
         //save history entry
         RiskHistory history = new RiskHistory();
+        history.setCustomerId(customerId);
         history.setScore(score);
         history.setCategory(category);
         history.setPreviousScore(preScore);
@@ -134,5 +132,37 @@ public abstract class RiskScoreServiceImpl implements RiskScoreService {
     }
 
 
+    @Override
+    public RiskResponseDTO getCurrent(Long customerId) {
+
+        RiskScore rs = riskScoreRepository.findByCustomerId(customerId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("No current risk score for customer " + customerId));
+
+        return RiskResponseDTO.builder()
+                .customerId(rs.getCustomerId())
+                .score(rs.getScore())
+                .category(rs.getCategory())
+                .calculatedAt(rs.getUpdatedAt())
+                .reasons(null)
+                .build();
+    }
+
+    @Override
+    public List<RiskResponseDTO> getHistory(Long customerId) {
+        List<RiskHistory> list = riskHistoryRepository.findTop30ByCustomerIdOrderByCalculatedAtDesc(customerId);
+
+        List<RiskResponseDTO> out = new ArrayList<>();
+        for (RiskHistory h : list) {
+            out.add(RiskResponseDTO.builder()
+                    .customerId(h.getCustomerId())
+                    .score(h.getScore())
+                    .category(h.getCategory())
+                    .calculatedAt(h.getCalculatedAt())
+                    .reasons(null)
+                    .build());
+        }
+        return out;
+    }
 
 }

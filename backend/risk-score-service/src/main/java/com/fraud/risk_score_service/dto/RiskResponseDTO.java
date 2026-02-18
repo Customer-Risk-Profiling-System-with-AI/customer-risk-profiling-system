@@ -1,9 +1,6 @@
 package com.fraud.risk_score_service.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,6 +9,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class RiskResponseDTO {
 
     private Long customerId;
@@ -20,4 +18,5 @@ public class RiskResponseDTO {
     private LocalDateTime calculatedAt;
 
     private List<String> reasons;
+
 }
