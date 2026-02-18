@@ -1,10 +1,8 @@
 package com.fraud.risk_score_service.entity;
 
+import com.fasterxml.classmate.AnnotationOverrides;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -38,8 +36,6 @@ public class RiskHistory {
     @Column(nullable = false, length = 32)
     private String trigger; // TRANSACTION/DAILY_BATCH/MANUAL
 
-    private String modelVersion;
-
     private Boolean alertTriggered;
 
     @Column(columnDefinition = "TEXT")
@@ -47,6 +43,7 @@ public class RiskHistory {
 
     @Column(columnDefinition = "TEXT")
     private String reasonsJson;
+
 }
 
 
