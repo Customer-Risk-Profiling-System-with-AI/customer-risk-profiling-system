@@ -11,7 +11,7 @@ import java.time.LocalDate;
         name = "customer_agg_weekly",
         uniqueConstraints = @UniqueConstraint(columnNames = {"customer_id","week_start"})
 )
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class CustomerAggWeekly {
 
     @Id

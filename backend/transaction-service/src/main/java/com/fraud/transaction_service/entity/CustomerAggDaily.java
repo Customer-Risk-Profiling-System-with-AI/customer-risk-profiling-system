@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Table(name = "customer_agg_daily",
         uniqueConstraints = @UniqueConstraint(columnNames = {"customer_id", "agg_date"})
 )
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class CustomerAggDaily {
 
     @Id
