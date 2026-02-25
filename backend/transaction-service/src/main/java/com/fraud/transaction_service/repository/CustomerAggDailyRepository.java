@@ -1,5 +1,6 @@
 package com.fraud.transaction_service.repository;
 
+import com.fraud.transaction_service.dto.WeeklyAggregationDTO;
 import com.fraud.transaction_service.entity.CustomerAggDaily;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +19,7 @@ public interface CustomerAggDailyRepository extends JpaRepository<CustomerAggDai
     @Query("""
         SELECT d FROM CustomerAggDaily d
         WHERE d.aggDate >= :start AND d.aggDate < :end
-    """) //Spring does NOT know: ❌ What is "DateRange"? So it cannot auto-generate SQL. You could write:
+    """) //Spring does NOT know: ❌ What is "DateRange"? So it cannot auto-generate SQL. You could write.
     List<CustomerAggDaily> findAllByDateRange(LocalDate start, LocalDate end);
 
     @Query("""
@@ -45,5 +46,10 @@ public interface CustomerAggDailyRepository extends JpaRepository<CustomerAggDai
         GROUP BY d.customerId
     """)
     List<Object[]> rollupWeekly(LocalDate start, LocalDate end);
+
+  /*  @Query("""
+        select ... your query ...
+    """)
+    List<WeeklyAggregationDTO> aggregateWeekly(LocalDate start, LocalDate end);*/
 
 }
