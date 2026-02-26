@@ -1,9 +1,12 @@
 package com.fraud.transaction_service.controller;
 
+import com.fraud.transaction_service.dto.DailyAggregationDTO;
+import com.fraud.transaction_service.dto.WeeklyAggregationDTO;
 import com.fraud.transaction_service.entity.CustomerAggDaily;
 import com.fraud.transaction_service.service.DailyAggregationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -30,7 +33,7 @@ public class AggregationController {
 
     //Get one customer's daily aggregation
     @GetMapping("/{customerId}")
-    public Optional<CustomerAggDaily> getDailyAgg(
+    public ResponseEntity<CustomerAggDaily> getDailyAgg(
             //Take value from URL path. /25
             @PathVariable Long customerId,
 
@@ -40,7 +43,9 @@ public class AggregationController {
             //Expect date like this(YYYY-MM-DD)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate day)
     {
-        return dailyAggregationService.getByCustomerAndDate(customerId, day);
+        return dailyAggregationService.getByCustomerAndDate(customerId, day)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     //Get all rows in a date range
@@ -54,11 +59,11 @@ public class AggregationController {
 
     //Weekly rollup (grouped by customer)
     @GetMapping("/weekly-rollup")
-    public List<Object[]> weeklyRollup(
+    public List<WeeklyAggregationDTO> weeklyRollup(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end
     ) {
-        return dailyAggregationService.rollupWeekly(start, end);
+        return dailyAggregationService.rollup(start, end);
     }
 
     /*//Store weekly aggregation rows into customer_agg_weekly table

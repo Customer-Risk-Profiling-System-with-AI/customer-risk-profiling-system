@@ -1,6 +1,7 @@
 package com.fraud.transaction_service.service;
 
 import com.fraud.transaction_service.dto.DailyAggregationDTO;
+import com.fraud.transaction_service.dto.WeeklyAggregationDTO;
 import com.fraud.transaction_service.entity.CustomerAggDaily;
 import com.fraud.transaction_service.repository.CustomerAggDailyRepository;
 import com.fraud.transaction_service.repository.TransactionRepository;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,64 +23,63 @@ public class DailyAggregationService {
     private final CustomerAggDailyRepository customerAggDailyRepository;
     private final TransactionRepository transactionRepository;
 
-    @Transactional//Run this whole method as one safe database operation.
-    public void aggregateDay(LocalDate day){
+    @Transactional //Run this whole method as one safe database operation.
+    public void aggregateDay(LocalDate day) {
         LocalDateTime start = day.atStartOfDay();
         LocalDateTime end = day.plusDays(1).atStartOfDay();
 
-        List<DailyAggregationDTO> all = transactionRepository.aggregateDaily(start, end);
+        List<DailyAggregationDTO> rows = transactionRepository.aggregateDaily(start, end);
 
-        for(var r : all){
-            CustomerAggDaily ctm = customerAggDailyRepository.findByCustomerIdAndAggDate(r.getCustomerId(),day)
-                    .orElse(CustomerAggDaily.builder()
+        List<CustomerAggDaily> toSave = new ArrayList<>(rows.size());
+
+        for (DailyAggregationDTO r : rows) {
+            CustomerAggDaily ctm = customerAggDailyRepository
+                    .findByCustomerIdAndAggDate(r.getCustomerId(), day)
+                    .orElseGet(() -> CustomerAggDaily.builder()
                             .customerId(r.getCustomerId())
                             .aggDate(day)
                             .build());
 
-            ctm.setTotalAmount(r.getTotalAmount());
-            ctm.setTxCount(r.getTxCount());
-            ctm.setDeclineCount(r.getDeclineCount());
+            ctm.setTotalAmount(nvl(r.getTotalAmount()));
+            ctm.setTxCount(nvl(r.getTxCount()));
+            ctm.setDeclineCount(nvl(r.getDeclineCount()));
 
-            ctm.setEcomCount(r.getEcomCount());
-            ctm.setPosCount(r.getPosCount());
-            ctm.setAtmCount(r.getAtmCount());
+            ctm.setEcomCount(nvl(r.getEcomCount()));
+            ctm.setPosCount(nvl(r.getPosCount()));
+            ctm.setAtmCount(nvl(r.getAtmCount()));
 
-            ctm.setNightCount(r.getNightCount());
-            ctm.setHourlyPeakCount(r.getHourlyPeakCount());
+            ctm.setNightCount(nvl(r.getNightCount()));
+            ctm.setHourlyPeakCount(nvl(r.getHourlyPeakCount()));
 
-            ctm.setMaxTxnAmount(r.getMaxTxnAmount());
-            ctm.setAvgTxnAmount(r.getAvgTxnAmount());
-            ctm.setStdTxnAmount(r.getStdTxnAmount());
+            ctm.setMaxTxnAmount(nvl(r.getMaxTxnAmount()));
+            ctm.setAvgTxnAmount(nvl(r.getAvgTxnAmount()));
+            ctm.setStdTxnAmount(nvl(r.getStdTxnAmount()));
 
-            ctm.setUniqueDeviceCount(r.getUniqueDeviceCount());
-            ctm.setUniqueCountryCount(r.getUniqueCountryCount());
-            ctm.setUniqueIpCount(r.getUniqueIpCount());
+            ctm.setUniqueDeviceCount(nvl(r.getUniqueDeviceCount()));
+            ctm.setUniqueCountryCount(nvl(r.getUniqueCountryCount()));
+            ctm.setUniqueIpCount(nvl(r.getUniqueIpCount()));
 
-            ctm.setUniqueMerchantCount(r.getUniqueMerchantCount());
-            ctm.setRiskyMerchantCount(r.getRiskyMerchantCount());
+            ctm.setUniqueMerchantCount(nvl(r.getUniqueMerchantCount()));
+            ctm.setRiskyMerchantCount(nvl(r.getRiskyMerchantCount()));
 
-            customerAggDailyRepository.save(ctm);
-
+            toSave.add(ctm);
         }
 
-
-
+        customerAggDailyRepository.saveAll(toSave);
     }
 
-    public Optional<CustomerAggDaily> getByCustomerAndDate(Long customerId, LocalDate day){
-        
-        return customerAggDailyRepository.findByCustomerIdAndAggDate(customerId,day);
+    public Optional<CustomerAggDaily> getByCustomerAndDate(Long customerId, LocalDate day) {
+        return customerAggDailyRepository.findByCustomerIdAndAggDate(customerId, day);
     }
 
-    public List<CustomerAggDaily> getByDateRange(LocalDate start, LocalDate end){
-
-        return customerAggDailyRepository.findAllByDateRange(start,end);
-
+    public List<CustomerAggDaily> getByDateRange(LocalDate start, LocalDate end) {
+        return customerAggDailyRepository.findAllByDateRange(start, end);
     }
 
-    public List<Object[]> rollupWeekly(LocalDate start, LocalDate end){
-        return customerAggDailyRepository.rollupWeekly(start, end);
+    public List<WeeklyAggregationDTO> rollup(LocalDate start, LocalDate end) {
+        return customerAggDailyRepository.rollupRange(start.atStartOfDay(), end.atStartOfDay());
     }
 
-
+    private static BigDecimal nvl(BigDecimal v) { return v == null ? BigDecimal.ZERO : v; }
+    private static Long nvl(Long v) { return v == null ? 0L : v; }
 }
