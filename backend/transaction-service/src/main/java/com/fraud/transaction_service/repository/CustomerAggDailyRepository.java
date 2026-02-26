@@ -28,7 +28,7 @@ public interface CustomerAggDailyRepository extends JpaRepository<CustomerAggDai
     List<CustomerAggDaily> findAllByDateRange(@org.springframework.data.repository.query.Param("start") LocalDate start,
                                               @org.springframework.data.repository.query.Param("end") LocalDate end);
 
-    @Query(value = """
+    /*@Query(value = """
 SELECT
   t.customer_id AS customerId,
   SUM(t.amount) AS totalAmount,
@@ -68,7 +68,7 @@ WHERE t.transaction_datetime >= :start
 GROUP BY t.customer_id
 """, nativeQuery = true)
     List<DailyAggregationDTO> aggregateDaily(@Param("start") LocalDateTime start,
-                                             @Param("end") LocalDateTime end);
+                                             @Param("end") LocalDateTime end);*/
 
     @Query(value = """
 SELECT
