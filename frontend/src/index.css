@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@layer theme {
+  :root {
+    --color-gray-50: #f9fafb;
+    --color-gray-900: #111827;
+  }
+}
+
+@layer base {
+  body {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    @apply antialiased text-gray-900 bg-gray-50;
+  }
+}
