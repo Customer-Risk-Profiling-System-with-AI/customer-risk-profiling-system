@@ -115,5 +115,11 @@ GROUP BY t.customer_id
     List<WeeklyAggregationDTO> rollupRange(@Param("start") LocalDateTime start,
                                             @Param("end") LocalDateTime end);
 
+    List<CustomerAggDaily>
+    findByCustomerIdAndAggDateBetween(
+            Long customerId,
+            LocalDate start,
+            LocalDate end
+    );
 
 }
