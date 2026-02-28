@@ -77,4 +77,6 @@ public class CustomerAggDaily {
 
     @Column(name="risky_merchant_count", nullable=false)
     private Long riskyMerchantCount;
+
+
 }
