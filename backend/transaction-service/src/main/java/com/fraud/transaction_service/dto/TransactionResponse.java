@@ -1,8 +1,8 @@
 package com.fraud.transaction_service.dto;
 
 
-import com.fraud.transaction_service.entity.Channel;
-import com.fraud.transaction_service.entity.TransactionStatus;
+import com.fraud.transaction_service.Channel.Channel;
+import com.fraud.transaction_service.Channel.TransactionStatus;
 import lombok.*;
 
 import java.math.BigDecimal;

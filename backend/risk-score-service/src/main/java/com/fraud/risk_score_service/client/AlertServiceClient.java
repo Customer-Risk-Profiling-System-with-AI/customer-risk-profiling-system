@@ -1,4 +1,4 @@
 package com.fraud.risk_score_service.client;
 
-public class TransactionClient {
+public interface AlertServiceClient {
 }

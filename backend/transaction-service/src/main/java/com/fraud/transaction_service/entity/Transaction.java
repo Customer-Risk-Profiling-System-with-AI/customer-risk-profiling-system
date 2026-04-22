@@ -1,6 +1,8 @@
 package com.fraud.transaction_service.entity;
 
 
+import com.fraud.transaction_service.Channel.Channel;
+import com.fraud.transaction_service.Channel.TransactionStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.*;
