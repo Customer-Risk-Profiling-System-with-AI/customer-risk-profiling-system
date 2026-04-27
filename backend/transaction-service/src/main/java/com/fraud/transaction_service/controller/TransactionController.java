@@ -17,6 +17,11 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
+    @GetMapping("/test")
+    public String test() {
+        return "Transaction Service Working ✅";
+    }
+
     //Create transaction
     @PostMapping
     public TransactionResponse create(@RequestBody TransactionRequest request) {
