@@ -1,6 +1,5 @@
 package com.fraud.transaction_service.service;
 
-
 import com.fraud.transaction_service.entity.Transaction;
 import com.fraud.transaction_service.Channel.TransactionStatus;
 import com.fraud.transaction_service.exception.ResourceNotFoundException;
@@ -8,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.fraud.transaction_service.repository.TransactionRepository;
 import com.fraud.transaction_service.dto.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -40,6 +40,9 @@ public class TransactionService {
                 .deviceCode(request.getDeviceCode())
                 .location(request.getLocation())
                 .transactionStatus(TransactionStatus.PENDING)
+                .transactionDatetime(request.getTransactionDatetime())
+                .createdAt(LocalDateTime.now())
+
                 .build();
 
         Transaction saved = transactionRepository.save(ts);
@@ -60,7 +63,7 @@ public class TransactionService {
                 .transactionStatus(ts.getTransactionStatus())
                 .declineReason(ts.getDeclineReason())
                 .transactionDatetime(ts.getTransactionDatetime())
-                .createdAt(ts.getCreatedAt())
+                .createdAt(LocalDateTime.now())
                 .build();
 
     }
