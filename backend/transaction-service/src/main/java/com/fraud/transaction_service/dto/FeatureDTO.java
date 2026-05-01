@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Builder
 public class FeatureDTO {
 
-    private Long customerId;
+    /*private Long customerId;
 
     // Volume & Amount
     private Long txCount30d;
@@ -39,6 +39,25 @@ public class FeatureDTO {
     private Double highRiskMccRatio30d;
 
     // Behavioral Flags
+    private Boolean newDeviceFlagRecent;
+    private Boolean newCountryFlagRecent;*/
+
+    private Long txCount30d;
+    private BigDecimal totalAmount30d;
+    private BigDecimal avgTxnAmount30d;
+    private BigDecimal maxTxnAmount30d;
+    private BigDecimal amountStddev30d;
+
+    private Double spendVelocity7dVsPrev7d;
+    private Double txVelocity7dVsPrev7d;
+
+    private Double ecomRatio30d;
+    private Double posRatio30d;
+    private Double atmRatio30d;
+
+    private Long uniqueMerchantCount30d;
+    private Long riskyMerchantCount30d;
+
     private Boolean newDeviceFlagRecent;
     private Boolean newCountryFlagRecent;
 }

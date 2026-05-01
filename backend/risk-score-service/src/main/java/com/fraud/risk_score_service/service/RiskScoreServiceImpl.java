@@ -41,14 +41,25 @@ public class RiskScoreServiceImpl implements RiskScoreService {
     }
 
     private List<String> buildReasons(FeatureDTO features, int score) {
-        //TODO: replace with real rules
         List<String> reasons = new ArrayList<>();
 
-        if (features.getDeclineRatio() != null && features.getDeclineRatio() > 0.4)
-            reasons.add("Too many declined transactions");
-
-        if (features.getSpendVelocity() != null && features.getSpendVelocity() > 3.0)
+        if (features.getSpendVelocity7dVsPrev7d() != null &&
+                features.getSpendVelocity7dVsPrev7d() > 3.0) {
             reasons.add("Unusually fast spending");
+        }
+
+        if (features.getRiskyMerchantCount30d() != null &&
+                features.getRiskyMerchantCount30d() > 0) {
+            reasons.add("Risky merchant activity found");
+        }
+
+        if (Boolean.TRUE.equals(features.getNewDeviceFlagRecent())) {
+            reasons.add("New device used recently");
+        }
+
+        if (Boolean.TRUE.equals(features.getNewCountryFlagRecent())) {
+            reasons.add("New country activity detected");
+        }
 
         return reasons;
     }
@@ -62,9 +73,23 @@ public class RiskScoreServiceImpl implements RiskScoreService {
             throw new ResourceNotFoundException("No features found for customer " + customerId);
         }
 
-        //ML part. (that feature send to ml service and get score)
+        //ML part. (that feature sends to ml service and gets score)
         MlServiceClient.MlPredictResponse ml = mlServiceClient.predict(features);
-        int score = 100; //clampScore(ml.score());
+
+        if (ml == null) {
+            throw new RuntimeException("ML service returned null response");
+        }
+
+        if (ml.error() != null) {
+            throw new RuntimeException("ML error: " + ml.error());
+        }
+
+        if (ml.risk_score() == null) {
+            throw new RuntimeException("ML returned null risk_score");
+        }
+
+        // assuming ML returns risk_score (0–100)
+        int score = (int) Math.round(ml.risk_score());
 
         String category = riskCategoryCalculator.categoryFromScore(score);
 
@@ -113,7 +138,7 @@ public class RiskScoreServiceImpl implements RiskScoreService {
         history.setPreviousCategory(preCategory);
         history.setCalculatedAt(LocalDateTime.now());
 
-        history.setTrigger(trigger == null ? "TRANSACTION" : trigger);
+        history.setTrigger_type(trigger == null ? "TRANSACTION" : trigger);
         history.setAlertTriggered(movedUp);
         history.setFeatureSnapshotJson(toJsonSafe(features));
         history.setReasonsJson(toJsonSafe(reasons));

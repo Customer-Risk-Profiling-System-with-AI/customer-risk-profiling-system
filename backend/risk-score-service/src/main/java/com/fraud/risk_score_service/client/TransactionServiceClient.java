@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+//Risk Score Service → can call Transaction Service like a normal method
 @FeignClient(name = "transaction-service", url ="${clients.transaction-service}")
 public interface TransactionServiceClient {
 
