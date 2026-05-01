@@ -1,8 +1,12 @@
 package com.fraud.transaction_service.service;
 
+import com.fraud.risk_score_service.dto.RiskResponseDTO;
+import com.fraud.transaction_service.client.RiskScoreClient;
 import com.fraud.transaction_service.entity.Transaction;
 import com.fraud.transaction_service.Channel.TransactionStatus;
 import com.fraud.transaction_service.exception.ResourceNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fraud.transaction_service.repository.TransactionRepository;
 import com.fraud.transaction_service.dto.*;
@@ -10,44 +14,77 @@ import com.fraud.transaction_service.dto.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final RiskScoreClient riskScoreClient;
 
-    public TransactionService(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
-    }
+    @Autowired
+    private DailyAggregationService dailyAggregationService;
 
+    //Add Risk Score Service
     public TransactionResponse create(TransactionRequest request) {
 
-        /*Transaction ts = new Transaction();
-        ts.setCustomerId(request.getCustomerId());
-        ts.setAmount(request.getAmount());
-        ts.setCurrency(request.getCurrency());
-        ts.setChannel(request.getChannel());
-        ts.setMerchantCode(request.getMerchantCode());
-        ts.setDeviceCode(request.getDeviceCode());
-        ts.setLocation(request.getLocation());
-        ts.setTransactionStatus(TransactionStatus.PENDING);*/
+        try {
+            // 1. Build transaction first
+            Transaction ts = Transaction.builder()
+                    .customerId(request.getCustomerId())
+                    .amount(request.getAmount())
+                    .currency(request.getCurrency())
+                    .channel(request.getChannel())
+                    .merchantCode(request.getMerchantCode())
+                    .deviceCode(request.getDeviceCode())
+                    .location(request.getLocation())
+                    .transactionStatus(TransactionStatus.PENDING)
+                    .transactionDatetime(request.getTransactionDatetime())
+                    .createdAt(LocalDateTime.now())
+                    .build();
 
-        Transaction ts = Transaction.builder()
-                .customerId(request.getCustomerId())
-                .amount(request.getAmount())
-                .currency(request.getCurrency())
-                .channel(request.getChannel())
-                .merchantCode(request.getMerchantCode())
-                .deviceCode(request.getDeviceCode())
-                .location(request.getLocation())
-                .transactionStatus(TransactionStatus.PENDING)
-                .transactionDatetime(request.getTransactionDatetime())
-                .createdAt(LocalDateTime.now())
+            // 2. Save transaction first
+            Transaction saved = transactionRepository.save(ts);
 
-                .build();
+            dailyAggregationService.aggregateDay(
+                    saved.getTransactionDatetime().toLocalDate()
+            );
 
-        Transaction saved = transactionRepository.save(ts);
+            // 3. Now call risk score service
+            RiskResponseDTO risk = riskScoreClient.calculate(saved.getCustomerId());
 
-        return map(saved); //Convert a Transaction entity into a TransactionResponse DTO.
+            // 4. Decision logic
+            if ("High".equalsIgnoreCase(risk.getCategory())) {
+                saved.setTransactionStatus(TransactionStatus.DECLINED);
+                saved.setDeclineReason("High risk transaction");
+            } else {
+                saved.setTransactionStatus(TransactionStatus.APPROVED);
+                saved.setDeclineReason(null);
+            }
+
+            // 5. Save updated transaction
+            Transaction updated = transactionRepository.save(saved);
+
+            // 6. Return response
+            return TransactionResponse.builder()
+                    .transactionId(updated.getTransactionId())
+                    .customerId(updated.getCustomerId())
+                    .amount(updated.getAmount())
+                    .currency(updated.getCurrency())
+                    .channel(updated.getChannel())
+                    .merchantCode(updated.getMerchantCode())
+                    .deviceCode(updated.getDeviceCode())
+                    .location(updated.getLocation())
+                    .transactionStatus(updated.getTransactionStatus())
+                    .declineReason(updated.getDeclineReason())
+                    .transactionDatetime(updated.getTransactionDatetime())
+                    .createdAt(updated.getCreatedAt())
+                    .riskScore(risk.getScore())
+                    .riskLevel(risk.getCategory())
+                    .build();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Transaction failed: " + e.getMessage());
+        }
     }
 
     private TransactionResponse map(Transaction ts){

@@ -33,8 +33,8 @@ public class RiskHistory {
     @Column(nullable = false)
     private LocalDateTime calculatedAt;
 
-    @Column(nullable = false, length = 32)
-    private String trigger; // TRANSACTION/DAILY_BATCH/MANUAL
+    @Column(name = "trigger_type", nullable = false, length = 32)
+    private String trigger_type; // TRANSACTION/DAILY_BATCH/MANUAL
 
     private Boolean alertTriggered;
 

@@ -71,3 +71,4 @@ public class Transaction {
         if (transactionStatus == null) transactionStatus = TransactionStatus.valueOf(String.valueOf(TransactionStatus.PENDING));
     }
 }
+

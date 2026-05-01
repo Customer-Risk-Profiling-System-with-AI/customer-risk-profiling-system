@@ -11,6 +11,6 @@ public interface MlServiceClient {
     @PostMapping("/predict")
     MlPredictResponse predict(@RequestBody FeatureDTO features);
 
-    record MlPredictResponse(Integer score) {}
+    record MlPredictResponse(Double risk_score, String risk_level, String error) {}
 
 }
