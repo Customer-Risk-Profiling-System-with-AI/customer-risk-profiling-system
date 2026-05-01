@@ -32,4 +32,7 @@ public class TransactionResponse {
     private LocalDateTime transactionDatetime;
     private LocalDateTime createdAt;
 
+    private Integer riskScore;
+    private String riskLevel;
+
 }

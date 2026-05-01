@@ -16,7 +16,7 @@ public class RiskScoreController {
 
     private final RiskScoreServiceImpl riskScoreService;
 
-    @PostMapping("/calculate/{customerId}")
+    @GetMapping("/calculate/{customerId}")
     public RiskResponseDTO create(@PathVariable Long customerId, @RequestParam(defaultValue = "TRANSACTION") String trigger){
         return riskScoreService.calculateNow(customerId, trigger);
     }

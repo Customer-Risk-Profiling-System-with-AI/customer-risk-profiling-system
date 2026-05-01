@@ -10,11 +10,10 @@ public class RiskScoreServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RiskScoreServiceApplication.class, args);
-<<<<<<< HEAD
-		System.out.print("Risk_score is running.................................");
-=======
-		System.out.print("Risk_score is running");
->>>>>>> c2abe78c0175ad6f7fcac3be43c88450fe1ca36a
+
+		System.out.print("Risk_score is running..............................................................................");
+
+
 	}
 
 }
