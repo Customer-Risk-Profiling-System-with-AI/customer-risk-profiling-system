@@ -34,6 +34,20 @@ const Customers = () => {
         }
     };
 
+    const filteredCustomers = customers.filter(customer => {
+        const matchesSearch =
+            customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            customer.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            customer.email.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesFilter = filter === 'All' ||
+            (filter === 'High Risk' && customer.level === 'HIGH') ||
+            (filter === 'Medium Risk' && customer.level === 'MEDIUM') ||
+            (filter === 'Low Risk' && customer.level === 'LOW');
+
+        return matchesSearch && matchesFilter;
+    });
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -94,7 +108,7 @@ const Customers = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                            {customers.map((customer) => (
+                            {filteredCustomers.map((customer) => (
                                 <tr key={customer.id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{customer.id}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -145,7 +159,7 @@ const Customers = () => {
 
                 {/* Pagination */}
                 <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                    <span className="text-sm text-gray-500">Showing 1 to 7 of 9,280 entries</span>
+                    <span className="text-sm text-gray-500">Showing {filteredCustomers.length} {filteredCustomers.length === 1 ? 'entry' : 'entries'}</span>
                     <div className="flex gap-2">
                         <button className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50">Previous</button>
                         <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md">1</button>

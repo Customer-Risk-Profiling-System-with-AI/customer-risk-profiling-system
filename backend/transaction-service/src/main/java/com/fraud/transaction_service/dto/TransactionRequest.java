@@ -1,6 +1,6 @@
 package com.fraud.transaction_service.dto;
 
-import com.fraud.transaction_service.entity.Channel;
+import com.fraud.transaction_service.Channel.Channel;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Builder
@@ -24,11 +25,21 @@ public class TransactionRequest {
     @Size(max = 10)
     private String currency;
 
-    @NotBlank(message = "Channel is required")
+    @NotNull(message = "Channel is required")
     private Channel channel;
 
+    @NotBlank(message = "Device code is required")
     private String merchantCode;
+
+    @NotBlank(message = "Location code is required")
     private String deviceCode;
+
+    @NotBlank(message = "Transaction datetime is required")
     private String location;
+
+    @NotNull(message = "Transaction datetime is required")
+    private LocalDateTime transactionDatetime;
+
+
 
 }
