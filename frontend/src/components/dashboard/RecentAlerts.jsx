@@ -1,86 +1,65 @@
 import React from 'react';
-import { AlertTriangle, ChevronRight } from 'lucide-react';
+import { AlertTriangle, ChevronRight, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const RecentAlerts = () => {
-    const alerts = [
-        {
-            id: 1,
-            customer: 'John Smith',
-            customerId: 'CUST-10234',
-            riskScore: 78,
-            message: 'Unusual high-value international transaction',
-            time: 'Oct 25, 2025, 04:07 AM',
-            status: 'New',
-        },
-        {
-            id: 2,
-            customer: 'Sarah Johnson',
-            customerId: 'CUST-10567',
-            riskScore: 82,
-            message: 'New device used with high-velocity spending',
-            time: 'Oct 25, 2025, 03:37 AM',
-            status: 'Investigating',
-        },
-        {
-            id: 3,
-            customer: 'Michael Chen',
-            customerId: 'CUST-10892',
-            riskScore: 71,
-            message: 'Geographic anomaly detected',
-            time: 'Oct 25, 2025, 02:22 AM',
-            status: 'New',
-        },
-        {
-            id: 4,
-            customer: 'Emily Davis',
-            customerId: 'CUST-11203',
-            riskScore: 85,
-            message: 'Surge in eCommerce activity',
-            time: 'Oct 25, 2025, 01:22 AM',
-            status: 'New',
-        },
-    ];
-
+const RecentAlerts = ({ alerts = [], onSelectCustomer }) => {
     return (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-                <h3 className="text-lg font-bold text-gray-900">Recent High-Risk Alerts</h3>
-                <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">View All</button>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
+                <div>
+                    <h3 className="text-base font-bold text-gray-900">Recent High-Risk Alerts</h3>
+                    <p className="text-xs text-gray-500">Triggered by sudden velocity, unusual channels, or risk threshold breach</p>
+                </div>
+                <Link to="/alerts" className="text-xs text-blue-600 hover:text-blue-700 font-semibold">
+                    View All Alerts →
+                </Link>
             </div>
             <div className="divide-y divide-gray-100">
-                {alerts.map((alert) => (
-                    <div key={alert.id} className="p-4 hover:bg-gray-50 transition-colors flex items-center justify-between">
-                        <div className="flex items-start gap-4">
-                            <div className="mt-1">
-                                <AlertTriangle className="w-5 h-5 text-red-500" />
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <span className="font-semibold text-gray-900">{alert.customer}</span>
-                                    <span className="text-xs text-gray-500">{alert.customerId}</span>
-                                    <span className="px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-700">
-                                        Risk: {alert.riskScore}
-                                    </span>
-                                </div>
-                                <p className="text-sm text-gray-600 mt-1">{alert.message}</p>
-                                <p className="text-xs text-gray-400 mt-1">{alert.time}</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <span
-                                className={`px-3 py-1 rounded-full text-xs font-medium ${alert.status === 'New'
-                                        ? 'bg-blue-100 text-blue-700'
-                                        : 'bg-yellow-100 text-yellow-700'
-                                    }`}
-                            >
-                                {alert.status}
-                            </span>
-                            <button className="text-gray-400 hover:text-gray-600">
-                                <ChevronRight className="w-5 h-5" />
-                            </button>
-                        </div>
+                {alerts.length === 0 ? (
+                    <div className="py-8 text-center text-gray-400 text-sm">
+                        <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500 mb-2 opacity-80" />
+                        No high-risk alerts currently pending. All profiles normal.
                     </div>
-                ))}
+                ) : (
+                    alerts.slice(0, 5).map((alert) => (
+                        <div
+                            key={alert.id}
+                            onClick={() => onSelectCustomer && onSelectCustomer(alert.customerId)}
+                            className="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between cursor-pointer"
+                        >
+                            <div className="flex items-start gap-3">
+                                <div className="mt-0.5 p-2 rounded-lg bg-red-50 text-red-600 border border-red-100">
+                                    <AlertTriangle className="w-4 h-4" />
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-semibold text-sm text-gray-900">{alert.customerName || `Customer #${alert.customerId}`}</span>
+                                        <span className="text-xs text-gray-400">ID: {alert.customerId}</span>
+                                        <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                                            alert.riskScore >= 70 ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                                        }`}>
+                                            Risk: {alert.riskScore}
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-gray-600 mt-0.5">{alert.message}</p>
+                                    <p className="text-[11px] text-gray-400 mt-1">{alert.time}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <span
+                                    className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                                        alert.status === 'CRITICAL' || alert.status === 'High'
+                                            ? 'bg-red-50 text-red-700 border border-red-200'
+                                            : 'bg-amber-50 text-amber-700 border border-amber-200'
+                                    }`}
+                                >
+                                    {alert.status || 'Active'}
+                                </span>
+                                <ChevronRight className="w-4 h-4 text-gray-400" />
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );

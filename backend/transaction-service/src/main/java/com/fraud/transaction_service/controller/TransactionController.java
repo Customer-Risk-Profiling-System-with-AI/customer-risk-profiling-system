@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/transactions")
 @RequiredArgsConstructor
@@ -20,6 +21,12 @@ public class TransactionController {
     @GetMapping("/test")
     public String test() {
         return "Transaction Service Working ✅";
+    }
+
+    //Get all transactions
+    @GetMapping
+    public List<TransactionResponse> getAll() {
+        return transactionService.getAll();
     }
 
     //Create transaction

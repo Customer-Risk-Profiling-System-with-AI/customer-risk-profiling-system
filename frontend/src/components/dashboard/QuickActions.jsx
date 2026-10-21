@@ -1,35 +1,79 @@
-import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowRight, PlusCircle, RefreshCw, CheckCircle2 } from 'lucide-react';
+import api from '../../services/api';
 
-const QuickActions = () => {
+const QuickActions = ({ onOpenTransactionModal, onRefreshData, highRiskCount = 0 }) => {
+    const [runningBatch, setRunningBatch] = useState(false);
+    const [scanMessage, setScanMessage] = useState(null);
+
+    const handleRunBatchAnalysis = async () => {
+        setRunningBatch(true);
+        setScanMessage(null);
+        try {
+            const riskScores = await api.getAllRiskScores();
+            // Trigger recalculation for all known customers
+            for (const item of riskScores) {
+                if (item.customerId) {
+                    await api.calculateRisk(item.customerId, 'SYSTEM_SCHEDULED');
+                }
+            }
+            setScanMessage('Profile scan completed!');
+            if (onRefreshData) onRefreshData();
+            setTimeout(() => setScanMessage(null), 4000);
+        } catch (err) {
+            console.error('Batch scan error:', err);
+        } finally {
+            setRunningBatch(false);
+        }
+    };
+
     return (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-6">Quick Actions</h3>
 
-            <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
-                        <span className="text-orange-600 font-bold text-xl">23</span>
+            <div className="space-y-5">
+                <div className="flex items-center gap-4 p-3 bg-red-50/60 rounded-xl border border-red-100">
+                    <div className="w-11 h-11 rounded-lg bg-red-100 text-red-700 flex items-center justify-center font-bold text-lg">
+                        {highRiskCount}
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-900">Pending Reviews</p>
-                        <p className="text-xs text-gray-500">Requires attention</p>
+                        <p className="text-sm font-semibold text-gray-900">High Risk Profiles</p>
+                        <p className="text-xs text-gray-500">Requires enhanced auth or review</p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-                        <span className="text-green-600 font-bold text-sm">96.8%</span>
+                <div className="flex items-center gap-4 p-3 bg-emerald-50/60 rounded-xl border border-emerald-100">
+                    <div className="w-11 h-11 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
+                        96.8%
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-900">Model Accuracy</p>
-                        <p className="text-xs text-gray-500">Last 30 days</p>
+                        <p className="text-sm font-semibold text-gray-900">Model Precision</p>
+                        <p className="text-xs text-gray-500">Behavioral Anomaly Engine</p>
                     </div>
                 </div>
 
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-200">
-                    Run Risk Analysis
-                    <ArrowRight className="w-4 h-4" />
+                {scanMessage && (
+                    <div className="p-2.5 bg-emerald-50 text-emerald-800 text-xs rounded-lg flex items-center gap-2 border border-emerald-200 animate-in fade-in">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span>{scanMessage}</span>
+                    </div>
+                )}
+
+                <button
+                    onClick={onOpenTransactionModal}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-colors shadow-md shadow-blue-200"
+                >
+                    <PlusCircle className="w-4 h-4" />
+                    Simulate Transaction
+                </button>
+
+                <button
+                    onClick={handleRunBatchAnalysis}
+                    disabled={runningBatch}
+                    className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 py-2.5 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-colors border border-slate-300 disabled:opacity-50"
+                >
+                    <RefreshCw className={`w-4 h-4 ${runningBatch ? 'animate-spin text-blue-600' : ''}`} />
+                    {runningBatch ? 'Scanning Customers...' : 'Scan All Profiles'}
                 </button>
             </div>
         </div>

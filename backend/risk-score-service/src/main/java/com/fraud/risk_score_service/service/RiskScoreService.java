@@ -10,5 +10,5 @@ public interface RiskScoreService {
     RiskResponseDTO calculateNow(Long customerId, String trigger);
     RiskResponseDTO getCurrent(Long customerId);
     List<RiskResponseDTO> getHistory(Long customerId);
-
+    List<com.fraud.risk_score_service.entity.RiskScore> getAll();
 }
