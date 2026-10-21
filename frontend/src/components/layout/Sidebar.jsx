@@ -41,14 +41,28 @@ const Sidebar = () => {
             </nav>
 
             <div className="p-4 border-t border-gray-200">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
-                        FA
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
+                            FA
+                        </div>
+                        <div>
+                            <p className="text-xs font-bold text-gray-900">Fraud Analyst</p>
+                            <p className="text-[11px] text-gray-500">analyst@bank.com</p>
+                        </div>
                     </div>
-                    <div>
-                        <p className="text-sm font-medium text-gray-900">Fraud Analyst</p>
-                        <p className="text-xs text-gray-500">analyst@bank.com</p>
-                    </div>
+                    <button
+                        onClick={() => {
+                            localStorage.removeItem('fraudguard_user');
+                            window.location.href = '/login';
+                        }}
+                        className="text-gray-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-colors"
+                        title="Sign Out"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </button>
                 </div>
             </div>
         </aside>

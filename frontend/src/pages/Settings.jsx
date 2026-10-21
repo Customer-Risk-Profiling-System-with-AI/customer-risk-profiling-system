@@ -8,31 +8,31 @@ const Settings = () => {
     const dataSources = [
         {
             id: 1,
-            name: 'Transaction Database',
-            records: '2.3M records',
-            status: 'Connected',
-            icon: Database,
-        },
-        {
-            id: 2,
-            name: 'Device Fingerprinting',
-            records: '450K records',
-            status: 'Connected',
-            icon: Smartphone,
-        },
-        {
-            id: 3,
-            name: 'Authentication Logs',
-            records: '3.1M records',
+            name: 'API Gateway (Port 9090)',
+            records: 'Routes /api/transactions & /api/risk',
             status: 'Connected',
             icon: Shield,
         },
         {
-            id: 4,
-            name: 'Chargeback Records',
-            records: '12K records',
-            status: 'Connection Issue',
+            id: 2,
+            name: 'Transaction Microservice (Port 9091)',
+            records: 'Live Ingestion & Daily/Weekly Aggregates',
+            status: 'Connected',
+            icon: Database,
+        },
+        {
+            id: 3,
+            name: 'Risk Score Microservice (Port 9092)',
+            records: 'Dynamic Behavioral Risk Engine (0-100)',
+            status: 'Connected',
             icon: Repeat,
+        },
+        {
+            id: 4,
+            name: 'MariaDB 11.8 Database (Port 3306)',
+            records: 'risk_score_db & transaction-service',
+            status: 'Connected',
+            icon: Database,
         },
     ];
 

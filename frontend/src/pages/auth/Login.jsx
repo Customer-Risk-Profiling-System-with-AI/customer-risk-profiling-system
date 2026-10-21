@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShieldCheck, Mail, Lock, ArrowRight } from 'lucide-react';
 
 const Login = () => {
     const navigate = useNavigate();
+    const [email, setEmail] = useState('analyst@bank.com');
+    const [password, setPassword] = useState('••••••••');
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // Simulate login
+        localStorage.setItem('fraudguard_user', JSON.stringify({
+            email,
+            name: 'Fraud Analyst',
+            role: 'Senior Fraud Investigator',
+            token: 'mock-jwt-token-2026',
+        }));
         navigate('/');
     };
 

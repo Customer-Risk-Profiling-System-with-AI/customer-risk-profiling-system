@@ -8,26 +8,33 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+import com.fraud.risk_score_service.entity.RiskScore;
 
-@RequestMapping("/risk")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "*")
+@RequestMapping({"/api/risk", "/risk"})
 @RestController
 public class RiskScoreController {
 
     private final RiskScoreServiceImpl riskScoreService;
 
+    @GetMapping
+    public List<RiskScore> getAll() {
+        return riskScoreService.getAll();
+    }
+
     @GetMapping("/calculate/{customerId}")
-    public RiskResponseDTO create(@PathVariable Long customerId, @RequestParam(defaultValue = "TRANSACTION") String trigger){
+    public RiskResponseDTO create(@PathVariable("customerId") Long customerId, @RequestParam(defaultValue = "TRANSACTION") String trigger){
         return riskScoreService.calculateNow(customerId, trigger);
     }
 
-    @GetMapping("/{customerId}")//Take this value from the URL and put it into my method parameter
-    public RiskResponseDTO getCurrent(@Valid Long customerId){
+    @GetMapping("/{customerId}")
+    public RiskResponseDTO getCurrent(@PathVariable("customerId") Long customerId){
         return riskScoreService.getCurrent(customerId);
     }
 
     @GetMapping("/{customerId}/history")
-    public List<RiskResponseDTO> getHistory(@PathVariable Long customerId) {
+    public List<RiskResponseDTO> getHistory(@PathVariable("customerId") Long customerId) {
         return riskScoreService.getHistory(customerId);
     }
 

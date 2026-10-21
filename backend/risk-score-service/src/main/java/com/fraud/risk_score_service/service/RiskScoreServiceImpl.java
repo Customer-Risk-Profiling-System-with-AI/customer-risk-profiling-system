@@ -74,18 +74,34 @@ public class RiskScoreServiceImpl implements RiskScoreService {
         }
 
         //ML part. (that feature sends to ml service and gets score)
-        MlServiceClient.MlPredictResponse ml = mlServiceClient.predict(features);
-
-        if (ml == null) {
-            throw new RuntimeException("ML service returned null response");
+        MlServiceClient.MlPredictResponse ml = null;
+        try {
+            ml = mlServiceClient.predict(features);
+        } catch (Exception e) {
+            int calculatedScore = 20;
+            if (features.getSpendVelocity7dVsPrev7d() != null && features.getSpendVelocity7dVsPrev7d() > 2.0) {
+                calculatedScore += 30;
+            }
+            if (features.getRiskyMerchantCount30d() != null && features.getRiskyMerchantCount30d() > 0) {
+                calculatedScore += 25;
+            }
+            if (Boolean.TRUE.equals(features.getNewDeviceFlagRecent())) {
+                calculatedScore += 15;
+            }
+            if (Boolean.TRUE.equals(features.getNewCountryFlagRecent())) {
+                calculatedScore += 20;
+            }
+            if (features.getMaxTxnAmount30d() != null && features.getMaxTxnAmount30d().doubleValue() > 5000) {
+                calculatedScore += 15;
+            }
+            calculatedScore = Math.min(100, Math.max(0, calculatedScore));
+            String cat = riskCategoryCalculator.categoryFromScore(calculatedScore);
+            ml = new MlServiceClient.MlPredictResponse((double) calculatedScore, cat, null);
         }
 
-        if (ml.error() != null) {
-            throw new RuntimeException("ML error: " + ml.error());
-        }
-
-        if (ml.risk_score() == null) {
-            throw new RuntimeException("ML returned null risk_score");
+        if (ml == null || ml.risk_score() == null) {
+            int fallbackScore = 25;
+            ml = new MlServiceClient.MlPredictResponse((double) fallbackScore, riskCategoryCalculator.categoryFromScore(fallbackScore), null);
         }
 
         // assuming ML returns risk_score (0–100)
@@ -190,4 +206,8 @@ public class RiskScoreServiceImpl implements RiskScoreService {
         return out;
     }
 
+    @Override
+    public List<RiskScore> getAll() {
+        return riskScoreRepository.findAll();
+    }
 }

@@ -134,4 +134,12 @@ public class TransactionService {
         return map(saved);
     }
 
+    public List<TransactionResponse> getAll() {
+        return transactionRepository.findAll()
+                .stream()
+                .sorted((a, b) -> b.getTransactionId().compareTo(a.getTransactionId()))
+                .map(this::map)
+                .toList();
+    }
+
 }

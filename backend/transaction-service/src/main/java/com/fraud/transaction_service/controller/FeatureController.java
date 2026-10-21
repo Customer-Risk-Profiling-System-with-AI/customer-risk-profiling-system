@@ -5,8 +5,9 @@ import com.fraud.transaction_service.service.FeatureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/features")
+@RequestMapping({"/api/features", "/features"})
 @RequiredArgsConstructor
 public class FeatureController {
 
