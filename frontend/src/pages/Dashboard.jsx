@@ -62,6 +62,26 @@ const Dashboard = () => {
         { name: 'High', count: highRiskProfiles.length },
     ];
 
+    // Compute real timeline from transactions
+    const timelineByDate = {};
+    transactions.forEach(t => {
+        if (!t.transactionDatetime) return;
+        const d = new Date(t.transactionDatetime);
+        const dayLabel = d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        if (!timelineByDate[dayLabel]) {
+            timelineByDate[dayLabel] = { name: dayLabel, low: 0, medium: 0, high: 0, total: 0 };
+        }
+        if (t.transactionStatus === 'DECLINED') {
+            timelineByDate[dayLabel].high += 1;
+        } else if (t.riskLevel === 'Medium' || (t.amount && Number(t.amount) > 100000)) {
+            timelineByDate[dayLabel].medium += 1;
+        } else {
+            timelineByDate[dayLabel].low += 1;
+        }
+        timelineByDate[dayLabel].total += 1;
+    });
+    const timelineData = Object.values(timelineByDate);
+
     // Generate alerts from high-risk customers & declined txs
     const alerts = [
         ...highRiskProfiles.map(h => ({
@@ -123,9 +143,9 @@ const Dashboard = () => {
             {/* Top Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Fraud Risk Monitoring Dashboard</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">CeylonBank Fraud Risk Monitoring Dashboard</h1>
                     <p className="text-gray-500 text-sm">
-                        Live connection to Spring Boot Microservices & MariaDB Risk Engine
+                        Live connection to CeylonBank RiskGuard AI & Behavioral Profiling Engine
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -158,7 +178,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Section */}
                 <div className="lg:col-span-2 space-y-6">
-                    <RiskChart riskDistribution={riskDistribution} />
+                    <RiskChart riskDistribution={riskDistribution} timelineData={timelineData} />
                     <RecentAlerts
                         alerts={alerts}
                         onSelectCustomer={handleSelectCustomer}
@@ -249,7 +269,7 @@ const Dashboard = () => {
                                                 <ArrowUpRight className="w-3 h-3 opacity-60" />
                                             </button>
                                         </td>
-                                        <td className="px-4 py-3 font-bold">${Number(tx.amount).toFixed(2)} {tx.currency}</td>
+                                        <td className="px-4 py-3 font-bold">{Number(tx.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {tx.currency || 'LKR'}</td>
                                         <td className="px-4 py-3">
                                             <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
                                                 {tx.channel}
@@ -265,8 +285,18 @@ const Dashboard = () => {
                                                 {tx.transactionStatus}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3 text-gray-400">
-                                            {tx.transactionDatetime ? new Date(tx.transactionDatetime).toLocaleDateString() : 'N/A'}
+                                        <td className="px-4 py-3 text-xs text-gray-600">
+                                            {tx.transactionDatetime ? (
+                                                <div>
+                                                    <div className="font-semibold text-gray-800 flex items-center gap-1">
+                                                        <Clock className="w-3 h-3 text-blue-600" />
+                                                        {new Date(tx.transactionDatetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                                    </div>
+                                                    <div className="text-[11px] text-gray-400">
+                                                        {new Date(tx.transactionDatetime).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })}
+                                                    </div>
+                                                </div>
+                                            ) : 'N/A'}
                                         </td>
                                         <td className="px-4 py-3 text-right">
                                             <button

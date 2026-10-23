@@ -1,67 +1,110 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, ShieldAlert, Bell, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, ShieldAlert, Bell, Settings, LogOut, Landmark } from 'lucide-react';
 import clsx from 'clsx';
 
 const Sidebar = () => {
     const navItems = [
         { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-        { name: 'Customer', path: '/customers', icon: Users },
+        { name: 'Customer Profiles', path: '/customers', icon: Users },
         { name: 'Risk Analysis', path: '/risk-analysis', icon: ShieldAlert },
-        { name: 'Alerts', path: '/alerts', icon: Bell },
+        { name: 'Fraud Alerts', path: '/alerts', icon: Bell },
         { name: 'Settings', path: '/settings', icon: Settings },
     ];
 
+    // Read active user session
+    let currentUser = {
+        name: 'Sunil Jayawardena',
+        role: 'Lead Fraud Analyst',
+        email: 'fraud.analyst@ceylonbank.lk',
+        bankCode: 'CEYLONBANK',
+        bankName: 'CeylonBank PLC',
+    };
+
+    try {
+        const stored = localStorage.getItem('lankaguard_user') || localStorage.getItem('fraudguard_user');
+        if (stored) {
+            currentUser = { ...currentUser, ...JSON.parse(stored) };
+        }
+    } catch {
+        // use fallback defaults
+    }
+
+    const handleSignOut = () => {
+        localStorage.removeItem('lankaguard_user');
+        localStorage.removeItem('fraudguard_user');
+        window.location.href = '/login';
+    };
+
     return (
-        <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
-            <div className="p-6">
-                <h2 className="text-2xl font-bold text-blue-900 flex items-center gap-2">
-                    FraudGuard
-                </h2>
+        <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col h-full text-slate-200">
+            {/* CeylonBank Branding */}
+            <div className="p-5 border-b border-slate-800">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-amber-500/10 shrink-0 p-1.5 border border-amber-400/30">
+                        <img src="/ceylonbank-icon.svg" alt="CeylonBank" className="w-7 h-7" />
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-lg font-black text-white tracking-tight">
+                                Ceylon<span className="text-amber-400">Bank</span>
+                            </span>
+                        </div>
+                        <p className="text-[10px] text-blue-400 font-semibold tracking-wide uppercase">
+                            RiskGuard AI System
+                        </p>
+                    </div>
+                </div>
+
+                <div className="mt-3 px-2.5 py-1.5 bg-slate-950/80 rounded-lg border border-slate-800 flex items-center justify-between text-[11px] text-slate-300">
+                    <span className="font-medium text-amber-300/90 truncate">Fraud Intelligence Division</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 ml-1 shadow-xs shadow-emerald-400/50"></span>
+                </div>
             </div>
 
-            <nav className="flex-1 px-4 space-y-2">
+            {/* Navigation links */}
+            <nav className="flex-1 px-3 py-4 space-y-1.5">
                 {navItems.map((item) => (
                     <NavLink
                         key={item.path}
                         to={item.path}
                         className={({ isActive }) =>
                             clsx(
-                                'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
+                                'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-150',
                                 isActive
-                                    ? 'bg-blue-600 text-white'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-semibold'
+                                    : 'text-slate-400 hover:bg-slate-800/80 hover:text-white'
                             )
                         }
                     >
-                        <item.icon className="w-5 h-5" />
+                        <item.icon className="w-4 h-4" />
                         {item.name}
                     </NavLink>
                 ))}
             </nav>
 
-            <div className="p-4 border-t border-gray-200">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
-                            FA
+            {/* User Profile Card and Sign Out */}
+            <div className="p-3 border-t border-slate-800 bg-slate-950/60">
+                <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-900 border border-slate-800">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center font-bold text-xs shrink-0">
+                            CB
                         </div>
-                        <div>
-                            <p className="text-xs font-bold text-gray-900">Fraud Analyst</p>
-                            <p className="text-[11px] text-gray-500">analyst@bank.com</p>
+                        <div className="min-w-0">
+                            <p className="text-xs font-semibold text-white truncate">
+                                {currentUser.name}
+                            </p>
+                            <p className="text-[10px] text-slate-400 truncate">
+                                {currentUser.email}
+                            </p>
                         </div>
                     </div>
                     <button
-                        onClick={() => {
-                            localStorage.removeItem('fraudguard_user');
-                            window.location.href = '/login';
-                        }}
-                        className="text-gray-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-colors"
-                        title="Sign Out"
+                        onClick={handleSignOut}
+                        className="text-slate-400 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors shrink-0"
+                        title="Sign Out to Terminal"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
+                        <LogOut className="w-4 h-4" />
                     </button>
                 </div>
             </div>

@@ -5,12 +5,12 @@ import api from '../../services/api';
 const NewTransactionModal = ({ isOpen, onClose, onTransactionCreated }) => {
     const [formData, setFormData] = useState({
         customerId: '101',
-        amount: '1250.00',
-        currency: 'USD',
+        amount: '12500.00',
+        currency: 'LKR',
         channel: 'ECOM',
-        merchantCode: 'AMZ-GLOBAL-99',
-        deviceCode: 'DEV-IOS-2026',
-        location: 'US-NY-NEWYORK',
+        merchantCode: 'CARGILLS-COLOMBO-01',
+        deviceCode: 'DEV-IOS-COLOMBO',
+        location: 'LK-WESTERN-COLOMBO',
     });
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
@@ -88,7 +88,7 @@ const NewTransactionModal = ({ isOpen, onClose, onTransactionCreated }) => {
                                     </p>
                                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-600 bg-white/70 p-2.5 rounded-lg border">
                                         <div><strong>Customer ID:</strong> {result.customerId}</div>
-                                        <div><strong>Amount:</strong> ${Number(result.amount).toFixed(2)} {result.currency}</div>
+                                        <div><strong>Amount:</strong> {Number(result.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {result.currency || 'LKR'}</div>
                                         <div><strong>Channel:</strong> {result.channel}</div>
                                         <div><strong>Status:</strong> <span className={`font-bold ${result.transactionStatus === 'APPROVED' ? 'text-emerald-600' : 'text-red-600'}`}>{result.transactionStatus}</span></div>
                                     </div>

@@ -37,7 +37,7 @@ SELECT
   COUNT(DISTINCT t.location)      AS uniqueCountryCount,
   0                               AS uniqueIpCount,
   COUNT(DISTINCT t.merchant_code) AS uniqueMerchantCount,
-  0                               AS riskyMerchantCount
+  SUM(CASE WHEN t.merchant_code LIKE '%CRYPTO%' OR t.merchant_code LIKE '%CASINO%' OR t.merchant_code LIKE '%GAMING%' OR t.merchant_code LIKE '%RISK%' THEN 1 ELSE 0 END) AS riskyMerchantCount
 FROM transactions t
 LEFT JOIN (
   SELECT customer_id, MAX(cnt) AS peakCnt

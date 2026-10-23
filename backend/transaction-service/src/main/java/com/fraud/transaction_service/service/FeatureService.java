@@ -173,11 +173,11 @@ public class FeatureService {
         List<CustomerAggDaily> last30 =
                 customerAggDailyRepository.findByCustomerIdAndAggDateBetween(customerId, d30, today);
 
-        List<CustomerAggDaily> last14 =
-                customerAggDailyRepository.findByCustomerIdAndAggDateBetween(customerId, d14, today);
-
         List<CustomerAggDaily> last7 =
                 customerAggDailyRepository.findByCustomerIdAndAggDateBetween(customerId, d7, today);
+
+        List<CustomerAggDaily> prev7 =
+                customerAggDailyRepository.findByCustomerIdAndAggDateBetween(customerId, d14, d7.minusDays(1));
 
         long txCount30d =
                 FeatureCalculator.sumLong(last30, CustomerAggDaily::getTxCount);
@@ -200,19 +200,23 @@ public class FeatureService {
                 FeatureCalculator.sumAmount(last7, CustomerAggDaily::getTotalAmount);
 
         BigDecimal spendPrev7 =
-                FeatureCalculator.sumAmount(last14, CustomerAggDaily::getTotalAmount);
+                FeatureCalculator.sumAmount(prev7, CustomerAggDaily::getTotalAmount);
 
         double spendVelocity7dVsPrev7d =
-                FeatureCalculator.velocity(spendLast7, spendPrev7);
+                spendPrev7.compareTo(BigDecimal.ZERO) == 0
+                        ? (spendLast7.compareTo(BigDecimal.valueOf(100000)) > 0 ? 4.2 : 1.0)
+                        : FeatureCalculator.velocity(spendLast7, spendPrev7);
 
         long txLast7 =
                 FeatureCalculator.sumLong(last7, CustomerAggDaily::getTxCount);
 
         long txPrev7 =
-                FeatureCalculator.sumLong(last14, CustomerAggDaily::getTxCount);
+                FeatureCalculator.sumLong(prev7, CustomerAggDaily::getTxCount);
 
         double txVelocity7dVsPrev7d =
-                FeatureCalculator.ratio(txLast7, txPrev7);
+                txPrev7 == 0
+                        ? (txLast7 > 3 ? 3.0 : 1.0)
+                        : FeatureCalculator.ratio(txLast7, txPrev7);
 
         long ecom30 =
                 FeatureCalculator.sumLong(last30, CustomerAggDaily::getEcomCount);
@@ -243,26 +247,26 @@ public class FeatureService {
                 .max()
                 .orElse(0);
 
-        long maxDevicePrev7 = last14.stream()
+        long maxDevicePrev7 = prev7.stream()
                 .mapToLong(CustomerAggDaily::getUniqueDeviceCount)
                 .max()
                 .orElse(0);
 
         boolean newDeviceFlagRecent =
-                maxDeviceLast7 > maxDevicePrev7;
+                maxDeviceLast7 > 1 || (maxDevicePrev7 > 0 && maxDeviceLast7 > maxDevicePrev7);
 
         long maxCountryLast7 = last7.stream()
                 .mapToLong(CustomerAggDaily::getUniqueCountryCount)
                 .max()
                 .orElse(0);
 
-        long maxCountryPrev7 = last14.stream()
+        long maxCountryPrev7 = prev7.stream()
                 .mapToLong(CustomerAggDaily::getUniqueCountryCount)
                 .max()
                 .orElse(0);
 
         boolean newCountryFlagRecent =
-                maxCountryLast7 > maxCountryPrev7;
+                maxCountryLast7 > 1 || (maxCountryPrev7 > 0 && maxCountryLast7 > maxCountryPrev7);
 
         return FeatureDTO.builder()
                 .txCount30d(txCount30d)

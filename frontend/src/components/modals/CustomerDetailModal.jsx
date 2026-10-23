@@ -184,7 +184,7 @@ const CustomerDetailModal = ({ customerId, isOpen, onClose, onRiskRecalculated }
                                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                             <div className="p-3 bg-white border rounded-xl">
                                                 <span className="text-xs text-gray-500 block">30d Total Amount</span>
-                                                <span className="text-base font-bold text-gray-900">${features.totalAmount30d ? Number(features.totalAmount30d).toFixed(2) : '0.00'}</span>
+                                                <span className="text-base font-bold text-gray-900">LKR {features.totalAmount30d ? Number(features.totalAmount30d).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}</span>
                                             </div>
                                             <div className="p-3 bg-white border rounded-xl">
                                                 <span className="text-xs text-gray-500 block">30d Transactions</span>
@@ -192,7 +192,7 @@ const CustomerDetailModal = ({ customerId, isOpen, onClose, onRiskRecalculated }
                                             </div>
                                             <div className="p-3 bg-white border rounded-xl">
                                                 <span className="text-xs text-gray-500 block">Max Transaction</span>
-                                                <span className="text-base font-bold text-gray-900">${features.maxTxnAmount30d ? Number(features.maxTxnAmount30d).toFixed(2) : '0.00'}</span>
+                                                <span className="text-base font-bold text-gray-900">LKR {features.maxTxnAmount30d ? Number(features.maxTxnAmount30d).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}</span>
                                             </div>
                                             <div className="p-3 bg-white border rounded-xl">
                                                 <span className="text-xs text-gray-500 block">Spend Velocity (7d / Prev 7d)</span>
@@ -228,6 +228,15 @@ const CustomerDetailModal = ({ customerId, isOpen, onClose, onRiskRecalculated }
                                                     {features.ecomRatio30d ? `${(features.ecomRatio30d * 100).toFixed(0)}%` : '0%'}
                                                 </span>
                                             </div>
+                                            <div className="p-3 bg-white border rounded-xl sm:col-span-2">
+                                                <span className="text-xs text-gray-500 block">Latest Transaction Timestamp</span>
+                                                <span className="text-sm font-bold text-gray-900 flex items-center gap-1.5 mt-0.5">
+                                                    <Clock className="w-4 h-4 text-blue-600 shrink-0" />
+                                                    {transactions && transactions.length > 0 && transactions[0].transactionDatetime
+                                                        ? `${new Date(transactions[0].transactionDatetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })} • ${new Date(transactions[0].transactionDatetime).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })}`
+                                                        : 'No recorded transactions'}
+                                                </span>
+                                            </div>
                                         </div>
                                     ) : (
                                         <div className="text-sm text-gray-500 p-4 border border-dashed rounded-xl text-center">
@@ -251,7 +260,7 @@ const CustomerDetailModal = ({ customerId, isOpen, onClose, onRiskRecalculated }
                                             {transactions.map((tx) => (
                                                 <div key={tx.transactionId} className="p-3 hover:bg-gray-50 flex items-center justify-between gap-4">
                                                     <div>
-                                                        <div className="font-semibold text-gray-900">#{tx.transactionId} • ${Number(tx.amount).toFixed(2)} {tx.currency}</div>
+                                                        <div className="font-semibold text-gray-900">#{tx.transactionId} • {Number(tx.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {tx.currency || 'LKR'}</div>
                                                         <div className="text-gray-500 flex items-center gap-2 mt-0.5">
                                                             <span>Channel: {tx.channel}</span>
                                                             <span>•</span>
@@ -260,15 +269,19 @@ const CustomerDetailModal = ({ customerId, isOpen, onClose, onRiskRecalculated }
                                                             <span>Loc: {tx.location}</span>
                                                         </div>
                                                     </div>
-                                                    <div className="text-right">
+                                                    <div className="text-right shrink-0">
                                                         <span className={`px-2 py-0.5 font-bold rounded-full ${
                                                             tx.transactionStatus === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' :
                                                             tx.transactionStatus === 'DECLINED' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
                                                         }`}>
                                                             {tx.transactionStatus}
                                                         </span>
-                                                        <div className="text-gray-400 mt-1">
-                                                            {new Date(tx.transactionDatetime).toLocaleDateString()}
+                                                        <div className="mt-1.5 flex items-center justify-end gap-1 text-xs font-semibold text-gray-800">
+                                                            <Clock className="w-3.5 h-3.5 text-blue-600" />
+                                                            <span>{tx.transactionDatetime ? new Date(tx.transactionDatetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'N/A'}</span>
+                                                        </div>
+                                                        <div className="text-[11px] text-gray-400">
+                                                            {tx.transactionDatetime ? new Date(tx.transactionDatetime).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' }) : ''}
                                                         </div>
                                                     </div>
                                                 </div>
