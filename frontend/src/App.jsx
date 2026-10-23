@@ -8,16 +8,15 @@ import Settings from './pages/Settings';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 
-// Mock ProtectedRoute component
+// ProtectedRoute checks active session in localStorage
 const ProtectedRoute = ({ children }) => {
-  // For now, always return children. 
-  // In a real app, check for authentication token here.
-  const isAuthenticated = true;
-  if (!isAuthenticated) {
+  const user = localStorage.getItem('lankaguard_user') || localStorage.getItem('fraudguard_user');
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
   return children;
 };
+
 
 function App() {
   return (

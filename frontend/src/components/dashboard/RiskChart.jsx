@@ -1,26 +1,18 @@
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Activity } from 'lucide-react';
 
 const RiskChart = ({ riskDistribution = [], timelineData = [] }) => {
-    // Default fallback timeline data if fewer than 2 days in database
-    const displayData = timelineData.length > 0 ? timelineData : [
-        { name: 'Mon', low: 12, medium: 5, high: 2 },
-        { name: 'Tue', low: 18, medium: 8, high: 3 },
-        { name: 'Wed', low: 15, medium: 6, high: 1 },
-        { name: 'Thu', low: 22, medium: 9, high: 4 },
-        { name: 'Fri', low: 25, medium: 12, high: 5 },
-        { name: 'Sat', low: 30, medium: 15, high: 6 },
-        { name: 'Sun', low: 28, medium: 11, high: 4 },
-    ];
+    const hasData = timelineData && timelineData.length > 0;
 
     return (
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-xs flex flex-col justify-between">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
                 <div>
                     <h3 className="text-base font-bold text-gray-900">Dynamic Risk Segmentation & Activity</h3>
-                    <p className="text-xs text-gray-500">Real-time risk scoring across customer portfolio</p>
+                    <p className="text-xs text-gray-500">Live risk trajectory and transactions processed by AI Engine</p>
                 </div>
-                {/* Distribution Badges */}
+                {/* Real Distribution Badges */}
                 <div className="flex items-center gap-3 text-xs">
                     <span className="flex items-center gap-1.5 font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
                         <span className="w-2 h-2 rounded-full bg-emerald-500" />
@@ -38,42 +30,50 @@ const RiskChart = ({ riskDistribution = [], timelineData = [] }) => {
             </div>
 
             <div className="h-[280px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                        data={displayData}
-                        margin={{
-                            top: 10,
-                            right: 20,
-                            left: -10,
-                            bottom: 0,
-                        }}
-                    >
-                        <defs>
-                            <linearGradient id="colorLow" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#10B981" stopOpacity={0.4}/>
-                                <stop offset="95%" stopColor="#10B981" stopOpacity={0.0}/>
-                            </linearGradient>
-                            <linearGradient id="colorMedium" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.4}/>
-                                <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.0}/>
-                            </linearGradient>
-                            <linearGradient id="colorHigh" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#EF4444" stopOpacity={0.5}/>
-                                <stop offset="95%" stopColor="#EF4444" stopOpacity={0.0}/>
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11 }} />
-                        <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11 }} />
-                        <Tooltip
-                            contentStyle={{ backgroundColor: '#0F172A', color: '#F8FAFC', border: 'none', borderRadius: '10px', fontSize: '12px' }}
-                            itemStyle={{ color: '#F8FAFC' }}
-                        />
-                        <Area type="monotone" dataKey="low" name="Low Risk" stroke="#10B981" strokeWidth={2} fillOpacity={1} fill="url(#colorLow)" />
-                        <Area type="monotone" dataKey="medium" name="Medium Risk" stroke="#F59E0B" strokeWidth={2} fillOpacity={1} fill="url(#colorMedium)" />
-                        <Area type="monotone" dataKey="high" name="High Risk" stroke="#EF4444" strokeWidth={2} fillOpacity={1} fill="url(#colorHigh)" />
-                    </AreaChart>
-                </ResponsiveContainer>
+                {!hasData ? (
+                    <div className="h-full flex flex-col items-center justify-center text-gray-400 text-sm">
+                        <Activity className="w-8 h-8 mb-2 text-gray-300 animate-pulse" />
+                        <p>No timeline transactions recorded yet.</p>
+                        <p className="text-xs text-gray-400 mt-1">Submit new transactions to plot real-time curves.</p>
+                    </div>
+                ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                            data={timelineData}
+                            margin={{
+                                top: 10,
+                                right: 20,
+                                left: -10,
+                                bottom: 0,
+                            }}
+                        >
+                            <defs>
+                                <linearGradient id="colorLow" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.4}/>
+                                    <stop offset="95%" stopColor="#10B981" stopOpacity={0.0}/>
+                                </linearGradient>
+                                <linearGradient id="colorMedium" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.4}/>
+                                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.0}/>
+                                </linearGradient>
+                                <linearGradient id="colorHigh" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#EF4444" stopOpacity={0.5}/>
+                                    <stop offset="95%" stopColor="#EF4444" stopOpacity={0.0}/>
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11 }} />
+                            <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11 }} />
+                            <Tooltip
+                                contentStyle={{ backgroundColor: '#0F172A', color: '#F8FAFC', border: 'none', borderRadius: '10px', fontSize: '12px' }}
+                                itemStyle={{ color: '#F8FAFC' }}
+                            />
+                            <Area type="monotone" dataKey="low" name="Low Risk" stroke="#10B981" strokeWidth={2} fillOpacity={1} fill="url(#colorLow)" />
+                            <Area type="monotone" dataKey="medium" name="Medium Risk" stroke="#F59E0B" strokeWidth={2} fillOpacity={1} fill="url(#colorMedium)" />
+                            <Area type="monotone" dataKey="high" name="High Risk" stroke="#EF4444" strokeWidth={2} fillOpacity={1} fill="url(#colorHigh)" />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                )}
             </div>
         </div>
     );

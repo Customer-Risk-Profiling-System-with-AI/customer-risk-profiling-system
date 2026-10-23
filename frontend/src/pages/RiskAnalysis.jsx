@@ -205,7 +205,7 @@ const RiskAnalysis = () => {
                                         <div className="p-3 bg-white border rounded-xl shadow-2xs">
                                             <span className="text-gray-400 block text-[11px]">30d Volume</span>
                                             <span className="font-bold text-sm text-gray-900">
-                                                ${features.totalAmount30d ? Number(features.totalAmount30d).toFixed(2) : '0.00'}
+                                                LKR {features.totalAmount30d ? Number(features.totalAmount30d).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                                             </span>
                                         </div>
                                         <div className="p-3 bg-white border rounded-xl shadow-2xs">
@@ -235,7 +235,7 @@ const RiskAnalysis = () => {
                                         <div className="p-3 bg-white border rounded-xl shadow-2xs">
                                             <span className="text-gray-400 block text-[11px]">Max Single Tx</span>
                                             <span className="font-bold text-sm text-gray-900">
-                                                ${features.maxTxnAmount30d ? Number(features.maxTxnAmount30d).toFixed(2) : '0.00'}
+                                                LKR {features.maxTxnAmount30d ? Number(features.maxTxnAmount30d).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                                             </span>
                                         </div>
                                         <div className="p-3 bg-white border rounded-xl shadow-2xs">

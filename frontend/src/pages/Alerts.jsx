@@ -43,7 +43,7 @@ const Alerts = () => {
                     customerId: d.customerId,
                     customer: `Customer #${d.customerId}`,
                     riskScore: 80,
-                    title: `Transaction Declined: #${d.transactionId} ($${Number(d.amount).toFixed(2)})`,
+                    title: `Transaction Declined: #${d.transactionId} (LKR ${Number(d.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`,
                     desc: `Automated rule decline triggered: ${d.declineReason || 'High fraud tendency'}. Channel: ${d.channel}, Device: ${d.deviceCode}`,
                     tags: [d.channel, d.deviceCode, 'Declined'],
                     priority: 'High',

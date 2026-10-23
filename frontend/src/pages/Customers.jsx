@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Filter, Eye, RefreshCw, Download, ShieldAlert, Plus, ArrowUpDown } from 'lucide-react';
+import { Search, Filter, Eye, RefreshCw, Download, ShieldAlert, Plus, ArrowUpDown, Clock } from 'lucide-react';
 import CustomerDetailModal from '../components/modals/CustomerDetailModal';
 import NewTransactionModal from '../components/modals/NewTransactionModal';
 import api from '../services/api';
@@ -292,10 +292,20 @@ const Customers = () => {
                                             {customer.totalTransactions} txns
                                         </td>
                                         <td className="px-5 py-4 font-bold text-gray-900">
-                                            ${customer.totalSpend.toFixed(2)}
+                                            LKR {Number(customer.totalSpend || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                         </td>
-                                        <td className="px-5 py-4 text-gray-500 text-[11px]">
-                                            {customer.lastActivity ? new Date(customer.lastActivity).toLocaleDateString() : 'N/A'}
+                                        <td className="px-5 py-4 text-xs text-gray-600">
+                                            {customer.lastActivity ? (
+                                                <div>
+                                                    <div className="font-semibold text-gray-800 flex items-center gap-1">
+                                                        <Clock className="w-3 h-3 text-blue-600" />
+                                                        {new Date(customer.lastActivity).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </div>
+                                                    <div className="text-[11px] text-gray-400">
+                                                        {new Date(customer.lastActivity).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })}
+                                                    </div>
+                                                </div>
+                                            ) : 'N/A'}
                                         </td>
                                         <td className="px-5 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
