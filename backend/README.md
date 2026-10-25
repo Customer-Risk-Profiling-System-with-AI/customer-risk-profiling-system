@@ -6,6 +6,19 @@ Backend API and services for the Customer Risk Profiling System.
 
 This folder contains all backend code, APIs, and server logic.
 
+## Python ML Service
+
+The ML service is a Python FastAPI service, not a Spring Boot module. Start it
+from `backend/ml-service`:
+
+```bat
+python -m pip install -r requirements.txt
+python -m uvicorn app:app --host 127.0.0.1 --port 8000
+```
+
+It loads the `.pkl` model during startup. The `risk-score-service` calls it
+directly at `http://127.0.0.1:8000`; do not run Maven in `backend/ml-service`.
+
 ## Spring Boot Backend — Setup Guide
 
 This section explains how to set up and run the Spring Boot backend locally and with Docker.
@@ -78,5 +91,4 @@ If you'd like, I can also:
 - add a `Dockerfile` to this folder,
 - add a `Makefile` / helper scripts for common commands, or
 - add sample `application.yml` and `.env` examples.
-
 

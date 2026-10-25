@@ -3,7 +3,7 @@ ML Model & Backend Service Connection Test Suite
 Verifies:
 1. Loading of .pkl files (ml/fraud_detection_model.pkl and backend/ml-service/model.pkl)
 2. Scikit-learn Pipeline architecture & feature compatibility
-3. Live HTTP API connection to ML Service (port 8000)
+3. Live HTTP API connection to the Python ML Service (port 8000)
 4. Integration with Spring Boot risk-score-service FeatureDTO schema
 """
 

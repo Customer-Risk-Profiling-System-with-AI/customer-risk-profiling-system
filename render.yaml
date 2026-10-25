@@ -1,0 +1,63 @@
+services:
+  - type: web
+    name: customer-risk-gateway
+    runtime: docker
+    dockerfilePath: ./backend/api-gateway/Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SERVER_PORT
+        value: "10000"
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: TRANSACTION_SERVICE_URL
+        value: http://customer-risk-transaction:9091
+      - key: RISK_SCORE_SERVICE_URL
+        value: http://customer-risk-score:9092
+
+  - type: web
+    name: customer-risk-transaction
+    runtime: docker
+    dockerfilePath: ./backend/transaction-service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SERVER_PORT
+        value: "9091"
+      - key: RISK_SCORE_SERVICE_URL
+        value: http://customer-risk-score:9092
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+
+  - type: web
+    name: customer-risk-score
+    runtime: docker
+    dockerfilePath: ./backend/risk-score-service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SERVER_PORT
+        value: "9092"
+      - key: ML_SERVICE_URL
+        value: http://customer-risk-ml:8000
+      - key: TRANSACTION_SERVICE_URL
+        value: http://customer-risk-transaction:9091
+      - key: RISK_SCORE_SERVICE_URL
+        value: http://customer-risk-score:9092
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+
+  - type: web
+    name: customer-risk-ml
+    runtime: docker
+    dockerfilePath: ./backend/ml-service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health

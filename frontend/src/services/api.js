@@ -1,5 +1,6 @@
 // Central API service for Customer Risk Profiling System
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+const API_ORIGIN = API_BASE === '/api' ? '' : API_BASE.replace(/\/$/, '');
 
 /**
  * Generic fetch wrapper with error handling
@@ -106,7 +107,7 @@ export const api = {
     // ---------------------------------------------------------------------------
     async getGatewayHealth() {
         try {
-            const res = await fetch('/actuator/health');
+            const res = await fetch(`${API_ORIGIN}/actuator/health`);
             return await res.json();
         } catch {
             return { status: 'DOWN' };

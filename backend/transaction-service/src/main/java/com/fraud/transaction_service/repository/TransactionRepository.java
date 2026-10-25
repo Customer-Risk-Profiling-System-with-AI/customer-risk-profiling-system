@@ -25,7 +25,7 @@ SELECT
   SUM(CASE WHEN t.channel = 'POS'  THEN 1 ELSE 0 END) AS posCount,
   SUM(CASE WHEN t.channel = 'ATM'  THEN 1 ELSE 0 END) AS atmCount,
 
-  SUM(CASE WHEN HOUR(t.transaction_datetime) >= 22 OR HOUR(t.transaction_datetime) < 5 THEN 1 ELSE 0 END) AS nightCount,
+  SUM(CASE WHEN EXTRACT(HOUR FROM t.transaction_datetime) >= 22 OR EXTRACT(HOUR FROM t.transaction_datetime) < 5 THEN 1 ELSE 0 END) AS nightCount,
 
   COALESCE(h.peakCnt, 0) AS hourlyPeakCount,
 
@@ -42,17 +42,17 @@ FROM transactions t
 LEFT JOIN (
   SELECT customer_id, MAX(cnt) AS peakCnt
   FROM (
-    SELECT customer_id, HOUR(transaction_datetime) AS hr, COUNT(*) AS cnt
+    SELECT customer_id, EXTRACT(HOUR FROM transaction_datetime) AS hr, COUNT(*) AS cnt
     FROM transactions
     WHERE transaction_datetime >= :start
       AND transaction_datetime <  :end
-    GROUP BY customer_id, HOUR(transaction_datetime)
+    GROUP BY customer_id, EXTRACT(HOUR FROM transaction_datetime)
   ) z
   GROUP BY customer_id
 ) h ON h.customer_id = t.customer_id
 WHERE t.transaction_datetime >= :start
   AND t.transaction_datetime <  :end
-GROUP BY t.customer_id
+GROUP BY t.customer_id, h.peakCnt
 """, nativeQuery = true)
     List<DailyAggregationDTO> aggregateDaily(@Param("start") LocalDateTime start,
                                              @Param("end") LocalDateTime end);

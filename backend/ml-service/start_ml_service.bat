@@ -1,7 +1,7 @@
 @echo off
 echo ========================================================
-echo Starting Customer Risk Profiling ML Service with .pkl Model
+echo Starting Python Customer Risk Profiling ML Service
 echo ========================================================
 cd /d "%~dp0"
-python -m uvicorn app:app --host 127.0.0.1 --port 8000 --reload
+python -m uvicorn app:app --host 127.0.0.1 --port 8000
 pause

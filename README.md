@@ -194,7 +194,7 @@ fraud-risk-system/
 │
 ├── transaction-service/
 ├── risk-score-service/
-├── ml-service/
+├── ml-service/             (Python FastAPI service)
 ├── alert-service/
 ├── report-service/
 │

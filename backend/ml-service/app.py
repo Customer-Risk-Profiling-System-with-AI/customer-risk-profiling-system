@@ -18,8 +18,8 @@ app.add_middleware(
 # Resolution paths for the .pkl model file
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_LOCATIONS = [
-    os.path.join(CURRENT_DIR, "model.pkl"),
     os.path.join(CURRENT_DIR, "..", "..", "ml", "fraud_detection_model.pkl"),
+    os.path.join(CURRENT_DIR, "model.pkl"),
     os.path.join(CURRENT_DIR, "fraud_detection_model.pkl"),
     "model.pkl",
     "fraud_detection_model.pkl"

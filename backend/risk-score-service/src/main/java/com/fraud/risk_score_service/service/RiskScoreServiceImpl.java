@@ -99,13 +99,13 @@ public class RiskScoreServiceImpl implements RiskScoreService {
             ml = new MlServiceClient.MlPredictResponse((double) calculatedScore, cat, null);
         }
 
-        if (ml == null || ml.risk_score() == null) {
+        if (ml == null || ml.riskScore() == null) {
             int fallbackScore = 25;
             ml = new MlServiceClient.MlPredictResponse((double) fallbackScore, riskCategoryCalculator.categoryFromScore(fallbackScore), null);
         }
 
         // assuming ML returns risk_score (0–100)
-        int score = (int) Math.round(ml.risk_score());
+        int score = (int) Math.round(ml.riskScore());
 
         String category = riskCategoryCalculator.categoryFromScore(score);
 
